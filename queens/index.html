@@ -46,22 +46,35 @@
     font-weight: 700;
   }
   .qn-cell .qq {
-    color: var(--fg);
-    font-size: 1.2em;
-    filter: drop-shadow(0 0 2px rgba(255,255,255,0.4));
+    color: #1a1a1a;
+    font-size: 1.5em;
+    font-weight: bold;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+    -webkit-text-stroke: 0.5px rgba(255,255,255,0.3);
   }
   .qn-cell.err .qq { color: var(--danger); filter: none; }
 
-  /* Region colors — distinct muted hues that read on both themes */
-  .qn-cell.r0 { background: #b5706e; }
-  .qn-cell.r1 { background: #c49464; }
-  .qn-cell.r2 { background: #b3a458; }
-  .qn-cell.r3 { background: #6a9e5e; }
-  .qn-cell.r4 { background: #5a9e88; }
-  .qn-cell.r5 { background: #5c84ab; }
-  .qn-cell.r6 { background: #8a72a8; }
-  .qn-cell.r7 { background: #a8687e; }
-  .qn-cell.r8 { background: #a88a58; }
+  /* Win animation — golden blinking queens */
+  @keyframes golden-blink {
+    0%, 100% { color: #ffd700; filter: drop-shadow(0 0 6px #ffd700); }
+    50% { color: #ffaa00; filter: drop-shadow(0 0 12px #ffaa00) drop-shadow(0 0 20px rgba(255,170,0,0.4)); }
+  }
+  .qn-cell.won .qq {
+    color: #ffd700;
+    animation: golden-blink 1.2s ease-in-out infinite;
+    -webkit-text-stroke: 0.5px rgba(0,0,0,0.3);
+  }
+
+  /* Region colors — high-contrast, widely spaced hues */
+  .qn-cell.r0 { background: #e74c3c; }
+  .qn-cell.r1 { background: #3498db; }
+  .qn-cell.r2 { background: #2ecc71; }
+  .qn-cell.r3 { background: #f39c12; }
+  .qn-cell.r4 { background: #9b59b6; }
+  .qn-cell.r5 { background: #1abc9c; }
+  .qn-cell.r6 { background: #e67e22; }
+  .qn-cell.r7 { background: #e84393; }
+  .qn-cell.r8 { background: #0984e3; }
 
   /* Thick region borders */
   .qn-cell.br-t { border-top:    2px solid rgba(0,0,0,0.5); }

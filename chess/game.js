@@ -3,7 +3,8 @@
 // Supports: basic moves, captures, castling, en passant, pawn auto-promote to queen.
 
 const FILES = ['a','b','c','d','e','f','g','h'];
-const GLYPH = { w:{k:'♔',q:'♕',r:'♖',b:'♗',n:'♘',p:'♙'}, b:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'} };
+/* Use filled glyphs for both sides — styled via CSS for a chess.com-like look */
+const GLYPH = { w:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'}, b:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'} };
 const VAL = { p:100, n:320, b:330, r:500, q:900, k:20000 };
 
 // Piece-square tables (from white's perspective; flipped for black).

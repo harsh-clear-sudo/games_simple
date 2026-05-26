@@ -1,4 +1,11 @@
 const EMOJI = ['🍎','🍌','🍇','🍓','🍒','🍑','🥝','🍍','🥥','🍉','🥭','🍋','🥑','🌽','🥕','🍆','🥦','🧄','🧅','🥔','🌶️','🫐','🍊','🍐','🍈','🍏','🫒','🥜','🌰','🍠','🥐','🥖'];
+/* 32 distinct hues so every pair gets its own tinted background */
+const PAIR_COLORS = [
+  '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#e84393',
+  '#d35400','#27ae60','#2980b9','#8e44ad','#c0392b','#16a085','#f39c12','#6c5ce7',
+  '#00b894','#fd79a8','#0984e3','#e17055','#636e72','#a29bfe','#55efc4','#fab1a0',
+  '#74b9ff','#dfe6e9','#ffeaa7','#81ecec','#ff7675','#fdcb6e','#b2bec3','#6ab04c',
+];
 const store = Gamekit.storage('memory:');
 let size, cards, flipped, matched, moves, startTime, timerId, locked;
 
@@ -6,8 +13,8 @@ function reset() {
   size = +document.getElementById('size').value;
   const n = size*size;
   const pairs = n/2;
-  const chosen = EMOJI.slice().sort(()=>Math.random()-0.5).slice(0, pairs);
-  cards = chosen.concat(chosen).sort(()=>Math.random()-0.5).map((e,i)=>({id:i, emoji:e, flipped:false, matched:false}));
+  const shuffled = EMOJI.map((e,i)=>({emoji:e,color:PAIR_COLORS[i]})).sort(()=>Math.random()-0.5).slice(0, pairs);
+  cards = shuffled.concat(shuffled).sort(()=>Math.random()-0.5).map((e,i)=>({id:i, emoji:e.emoji, color:e.color, flipped:false, matched:false}));
   flipped = []; matched = 0; moves = 0; locked = false;
   document.getElementById('moves').textContent = 0;
   document.getElementById('time').textContent = 0;
@@ -33,6 +40,7 @@ function render() {
   cards.forEach(c => {
     const d = document.createElement('div');
     d.className = 'card' + (c.flipped?' flip':'') + (c.matched?' match':'');
+    if (c.flipped || c.matched) d.style.background = c.color + '22';
     d.setAttribute('role', 'button');
     d.setAttribute('tabindex', '0');
     d.setAttribute('aria-label', c.matched || c.flipped ? c.emoji : 'Face-down card');

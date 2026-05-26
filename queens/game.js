@@ -273,6 +273,10 @@
       bestEl.textContent = Gamekit.fmtTime(s);
     }
     statusEl.innerHTML = '<span class="ok">Solved in ' + Gamekit.fmtTime(s) + '.</span>';
+    // Golden blink on all queen cells
+    for (let i = 0; i < N * N; i++) {
+      if (grid[i] === QUEEN) cellEls[i].classList.add("won");
+    }
   }
 
   function startTimer() {
