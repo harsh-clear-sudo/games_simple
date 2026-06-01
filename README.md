@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-8affc1?style=flat)](LICENSE)
 [![No build](https://img.shields.io/badge/build-none-ffd166?style=flat)](#run-locally)
 
-Twelve classics and logic puzzles built with vanilla **HTML, CSS, and JavaScript**. No frameworks, no build step, no dependencies — open one file and play. Mobile-first retro-terminal aesthetic.
+Twelve classics and logic puzzles built with vanilla **HTML, CSS, and JavaScript**. No frameworks, no build step, no npm dependencies — open one file and play. Mobile-first retro-terminal aesthetic.
 
 **▶ Play now: [wavde.github.io/games](https://wavde.github.io/games/)**
 
