@@ -1,12 +1,12 @@
 # 🎮 Browser Games
 
-[![Pages](https://img.shields.io/badge/play-wavde.github.io%2Fgames-f5c542?style=flat)](https://wavde.github.io/games/)
+<!-- [![Pages](https://img.shields.io/badge/play-wavde.github.io%2Fgames-f5c542?style=flat)](https://games-simple.pages.dev/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-8affc1?style=flat)](LICENSE)
 [![No build](https://img.shields.io/badge/build-none-ffd166?style=flat)](#run-locally)
 
 Twelve classics and logic puzzles built with vanilla **HTML, CSS, and JavaScript**. No frameworks, no build step, no npm dependencies — open one file and play. Mobile-first retro-terminal aesthetic.
 
-**▶ Play now: [wavde.github.io/games](https://wavde.github.io/games/)**
+**▶ Play now: []()** -->
 
 ---
 
@@ -48,7 +48,7 @@ Every logic puzzle ships with an in-browser generator + solver and three difficu
 ## Run locally
 
 ```bash
-git clone https://github.com/wavde/games.git
+git clone https://github.com/harsh-clear-sudo/games_simple
 cd games
 # open index.html in any modern browser
 ```
@@ -115,4 +115,4 @@ All generators validate uniqueness against a solver before returning.
 
 ## License
 
-[MIT](LICENSE) © Tejas Wavde
+[MIT](LICENSE) © Shreyansh Shukla

@@ -48,13 +48,20 @@
   function edgeKey(a, b) { return a < b ? (a + "-" + b) : (b + "-" + a); }
   function blocked(a, b) { return walls.has(edgeKey(a, b)); }
 
-  // Random Hamiltonian path via DFS + Warnsdorff heuristic
-  function hamiltonian(rng) {
+  // Random Hamiltonian path via DFS + Warnsdorff heuristic. Bounded by `maxCalls` so a
+  // start cell with no valid path (which requires exhaustive backtracking to prove, and
+  // can explode combinatorially on larger boards) can never hang the page — we just bail
+  // and the caller tries a fresh random start instead.
+  function hamiltonian(rng, maxCalls) {
     const total = N * N;
     const visited = new Uint8Array(total);
     const path = [];
     const start = Math.floor(rng() * total);
+    let calls = 0;
+    let budgetHit = false;
     function step(i) {
+      calls++;
+      if (calls > maxCalls) { budgetHit = true; return false; }
       path.push(i);
       visited[i] = 1;
       if (path.length === total) return true;
@@ -68,6 +75,7 @@
       });
       for (const n of nb) {
         if (step(n)) return true;
+        if (budgetHit) return false;
       }
       path.pop();
       visited[i] = 0;
@@ -77,21 +85,42 @@
     return null;
   }
 
-  // Count Hamiltonian paths from waypoints[0] visiting waypoints in order, obeying walls. Cap at `limit`.
-  function countSolutions(limit) {
+  // Deterministic boustrophedon (zig-zag) path — trivially a valid Hamiltonian path on any
+  // rectangular grid. Used as a last-resort fallback so puzzle generation always terminates
+  // with a valid, complete board even if every randomized attempt was abandoned.
+  function snakePath() {
+    const out = [];
+    for (let r = 0; r < N; r++) {
+      if (r % 2 === 0) {
+        for (let c = 0; c < N; c++) out.push(idx(r, c));
+      } else {
+        for (let c = N - 1; c >= 0; c--) out.push(idx(r, c));
+      }
+    }
+    return out;
+  }
+
+  // Count Hamiltonian paths from waypoints[0] visiting waypoints in order, obeying walls.
+  // Capped at `limit` solutions AND at `maxCalls` search steps so this can never hang
+  // on a pathological board — if the budget runs out we just report "unknown" rather
+  // than exhaustively searching.
+  function countSolutions(limit, maxCalls) {
     const total = N * N;
     const visited = new Uint8Array(total);
     const order = new Array(K);
     for (let k = 0; k < K; k++) order[waypoints[k]] = k;
     let count = 0;
+    let calls = 0;
     let nextWp = 1;
     function step(cur, len) {
-      if (count >= limit) return;
+      if (count >= limit || calls >= maxCalls) return;
+      calls++;
       if (len === total) {
         if (cur === waypoints[K - 1]) count++;
         return;
       }
       for (const n of neighbors(cur)) {
+        if (calls >= maxCalls) return;
         if (visited[n]) continue;
         if (blocked(cur, n)) continue;
         const wp = order[n];
@@ -113,15 +142,21 @@
     visited[waypoints[0]] = 1;
     nextWp = 1;
     step(waypoints[0], 1);
-    return count;
+    return { count, exhausted: calls >= maxCalls };
   }
 
   function generate(seed) {
     const rng = Gamekit.mulberry32(seed);
     const { N: n, K: k, walls: wallCount } = DIFFS[diff];
     N = n; K = k;
+    const PER_ATTEMPT_BUDGET = 30000;   // search steps allowed per candidate board
+    const TOTAL_BUDGET = 250000;        // hard cap across all attempts for this puzzle
+    const HAM_CALL_BUDGET = 40000;      // search steps allowed to find any starting path
+    let spent = 0;
+    let fallback = null; // best candidate found so far, used if we never confirm uniqueness
     for (let attempt = 0; attempt < 40; attempt++) {
-      const hp = hamiltonian(rng);
+      if (spent >= TOTAL_BUDGET) break;
+      const hp = hamiltonian(rng, HAM_CALL_BUDGET);
       if (!hp) continue;
       // Pick K waypoint positions along the path: index 0, last, plus K-2 in between sorted.
       const totalCells = N * N;
@@ -149,11 +184,35 @@
       waypoints = wps;
       walls = ws;
       solutionPath = hp;
+      if (!fallback) fallback = { waypoints: wps, walls: ws, solutionPath: hp };
 
-      const count = countSolutions(2);
-      if (count === 1) return true;
+      const { count, exhausted } = countSolutions(2, PER_ATTEMPT_BUDGET);
+      spent += exhausted ? PER_ATTEMPT_BUDGET : 0;
+      if (!exhausted && count === 1) return true;
     }
-    return true; // accept last attempt even if non-unique
+    // Couldn't confirm a uniquely-solvable board within budget — accept the first
+    // candidate we generated rather than risk hanging. It's still fully solvable.
+    if (fallback) {
+      waypoints = fallback.waypoints;
+      walls = fallback.walls;
+      solutionPath = fallback.solutionPath;
+      return true;
+    }
+    // Extremely unlucky: every randomized attempt was abandoned before completing a
+    // path at all. Fall back to a deterministic zig-zag path, which is always valid,
+    // so the game can never fail to produce a playable board.
+    const hp = snakePath();
+    const totalCells = N * N;
+    const positions = [0, totalCells - 1];
+    const interior = [];
+    for (let i = 1; i < totalCells - 1; i++) interior.push(i);
+    const shuffled = Gamekit.shuffle(interior, rng);
+    for (let i = 0; i < K - 2; i++) positions.push(shuffled[i]);
+    positions.sort((a, b) => a - b);
+    waypoints = positions.map(p => hp[p]);
+    walls = new Set();
+    solutionPath = hp;
+    return true;
   }
 
   function newPuzzle(seedOverride) {
@@ -331,6 +390,7 @@
     // Must end at last waypoint; must have visited waypoints in order (already enforced).
     if (path[path.length - 1] !== waypoints[K - 1]) return;
     won = true;
+    if (timerInterval) clearInterval(timerInterval);
     const s = Math.floor((Date.now() - timerStart) / 1000);
     const best = store.getInt("best:" + diff, null);
     if (best === null || s < best) {
