@@ -50,6 +50,15 @@
   .cell.o { color: var(--accent-2); }
   .cell.win { border-color: var(--accent-2); background: rgba(138, 255, 193, 0.08); }
 </style>
+
+<script>
+  (function(){
+    try {
+      const mode = localStorage.getItem('games:theme');
+      if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body class="g-tic-tac-toe">
 <main class="wrap">

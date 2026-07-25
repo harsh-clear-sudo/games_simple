@@ -81,6 +81,15 @@
     min-height: var(--tap);
   }
 </style>
+
+<script>
+  (function(){
+    try {
+      const mode = localStorage.getItem('games:theme');
+      if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body class="g-chess">
 <main class="wrap">

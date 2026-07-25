@@ -68,6 +68,15 @@
   .pt-rect-overlay.pc11 { background: rgba(245,184,0,0.22); border-color: #f5b800; }
   .game-controls { display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
 </style>
+
+<script>
+  (function(){
+    try {
+      const mode = localStorage.getItem('games:theme');
+      if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body class="g-patches">
 <main class="wrap">

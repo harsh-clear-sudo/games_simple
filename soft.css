@@ -55,6 +55,22 @@ body[class*="g-"] {
   color: var(--fg);
 }
 
+/* Light mode override for game pages */
+html[data-theme="light"] body[class*="g-"] {
+  --bg: #f4f1e8; --bg-2: #ece8dc; --panel: #ebe6d6; --panel-2: #e0dac6;
+  --fg: #141412; --muted: #6a6a62; --dim: #a39e8c;
+  --border: #c9c2ac; --border-hi: #a39e8c;
+  --accent: #9a6a00; --accent-2: #2a7a55; --danger: #b83232; --warn: #8a6a14;
+}
+@media (prefers-color-scheme: light) {
+  html:not([data-theme="dark"]) body[class*="g-"] {
+    --bg: #f4f1e8; --bg-2: #ece8dc; --panel: #ebe6d6; --panel-2: #e0dac6;
+    --fg: #141412; --muted: #6a6a62; --dim: #a39e8c;
+    --border: #c9c2ac; --border-hi: #a39e8c;
+    --accent: #9a6a00; --accent-2: #2a7a55; --danger: #b83232; --warn: #8a6a14;
+  }
+}
+
 /* Kill CRT scanlines on game pages */
 body[class*="g-"]::before { display: none !important; }
 

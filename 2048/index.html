@@ -59,6 +59,15 @@
   @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
   .tile.merged { animation: pop 0.18s ease-out; }
 </style>
+
+<script>
+  (function(){
+    try {
+      const mode = localStorage.getItem('games:theme');
+      if (mode === 'light' || mode === 'dark') document.documentElement.setAttribute('data-theme', mode);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body class="g-2048">
 <main class="wrap">
